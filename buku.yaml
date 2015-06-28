@@ -1,0 +1,130 @@
+SenzaInfo:
+  StackName: buku
+  Parameters:
+    - ImageVersion:
+        Description: "Docker image version of buku."
+    - DockerImage:
+        Description: "Docker image path of buku."
+    - MintBucket:
+        Description: "Mint Bucket of buku."
+    - ScalyrAccountKey:
+        Description: "Scalyr Account Key, necessary for Logging."
+    - ApplicationID:
+        Description: "The Application Id which got registered for buku in Yourturn/Kio."
+    - ZookeeperConnectionString:
+        Description: "Which Zookeeper Cluster should be used? Format: IP_NODE1:PORT,IP_NODE2:PORT, ..."
+    - ELBSecurityGroup:
+        Description: "The Security Group, in which the Load Balancer is"
+        
+SenzaComponents:
+  - Configuration:
+      Type: Senza::StupsAutoConfiguration
+  - AppServer:
+      Type: Senza::TaupageAutoScalingGroup
+      AutoScaling:
+        Minimum: 3
+        Maximum: 3
+        MetricType: CPU
+      HealthCheckType: ELB
+      ElasticLoadBalancer: AppLoadBalancer
+      LoadBalancerNames:
+        - Ref: AppLoadBalancer
+      BlockDeviceMappings:
+        - DeviceName: /dev/xvdk
+          Ebs:
+            VolumeSize: 80
+      InstanceType: t2.small
+      SecurityGroups:
+        - app-buku
+      IamRoles:
+        - Ref: BukuRole
+      TaupageConfig:
+        application_id: "{{Arguments.ApplicationID}}"
+        runtime: Docker
+        source: "{{Arguments.DockerImage}}:{{Arguments.ImageVersion}}"
+        ports:
+          9092: 9092
+          8004: 8004
+        mint_bucket: '{{Arguments.MintBucket}}'
+        scalyr_account_key: '{{Arguments.ScalyrAccountKey}}'
+        networking: host
+        mounts:
+          /data:
+            partition: /dev/xvdk
+            erase_on_boot: true
+            filesystem: ext4
+        environment:
+          ZOOKEEPER_CONN_STRING: "{{Arguments.ZookeeperConnectionString}}"
+          JMX_PORT: 8004
+
+Resources:
+  BukuRole:
+    Type: AWS::IAM::Role
+    Properties:
+      AssumeRolePolicyDocument:
+        Version: "2012-10-17"
+        Statement:
+        - Effect: Allow
+          Principal:
+            Service: ec2.amazonaws.com
+          Action: sts:AssumeRole
+      Path: /
+      Policies:
+      - PolicyName: AmazonS3MintBucketAccess
+        PolicyDocument:
+          Version: "2012-10-17"
+          Statement:
+          - Effect: Allow
+            Action: "s3:GetObject"
+            Resource: ["arn:aws:s3:::{{Arguments.MintBucket}}/*"]
+      - PolicyName: AmazonEC2MetadataReadAccess
+        PolicyDocument:
+          Version: "2012-10-17"
+          Statement:
+          - Effect: Allow
+            Action: ec2:Describe*
+            Resource: "*"
+          - Effect: Allow
+            Action: autoscaling:Describe*
+            Resource: "*"
+  Route53Record:
+    Type: AWS::Route53::RecordSet
+    Properties:
+      HostedZoneName: {{Arguments.HostedZone}}
+      Name: "{{Arguments.NameHostedZone}}"
+      SetIdentifier: "buku-{{Arguments.version}}"
+      Type: CNAME
+      TTL: 20
+      Weight: 0
+      ResourceRecords:
+        - Fn::GetAtt:
+           - AppLoadBalancer
+           - DNSName
+  AppLoadBalancer:
+    Type: AWS::ElasticLoadBalancing::LoadBalancer
+    Properties:
+      LoadBalancerName: "buku-{{Arguments.version}}"
+      CrossZone: true
+      HealthCheck:
+        Target: TCP:9092
+        Timeout: 5
+        Interval: 30
+        UnhealthyThreshold: 2
+        HealthyThreshold: 5
+      Listeners:
+        - InstancePort: 9092
+          LoadBalancerPort: 9092
+          Protocol: TCP
+          InstanceProtocol: TCP
+        - InstancePort: 8004
+          LoadBalancerPort: 8004
+          Protocol: TCP
+          InstanceProtocol: TCP
+      SecurityGroups:
+        - <SECURITY_GROUP>
+      Scheme: internal
+      Subnets:
+        Fn::FindInMap:
+          - LoadBalancerSubnets
+          - Ref: AWS::Region
+          - Subnets
