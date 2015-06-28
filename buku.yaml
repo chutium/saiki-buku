@@ -15,6 +15,10 @@ SenzaInfo:
         Description: "Which Zookeeper Cluster should be used? Format: IP_NODE1:PORT,IP_NODE2:PORT, ..."
     - ELBSecurityGroup:
         Description: "The Security Group, in which the Load Balancer is"
+    - NameHostedZone:
+        Description: "The specific Named Hosted Zone for Buku"
+    - HostedZone:
+        Description: "The generic Hosted Zone for your AWS account"
         
 SenzaComponents:
   - Configuration:
@@ -90,7 +94,7 @@ Resources:
   Route53Record:
     Type: AWS::Route53::RecordSet
     Properties:
-      HostedZoneName: {{Arguments.HostedZone}}
+      HostedZoneName: "{{Arguments.HostedZone}}"
       Name: "{{Arguments.NameHostedZone}}"
       SetIdentifier: "buku-{{Arguments.version}}"
       Type: CNAME
