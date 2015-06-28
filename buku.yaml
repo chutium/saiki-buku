@@ -125,7 +125,7 @@ Resources:
           Protocol: TCP
           InstanceProtocol: TCP
       SecurityGroups:
-        - <SECURITY_GROUP>
+        - {{Arguments.ELBSecurityGroup}}
       Scheme: internal
       Subnets:
         Fn::FindInMap:
