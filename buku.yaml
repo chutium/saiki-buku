@@ -13,8 +13,6 @@ SenzaInfo:
         Description: "The Application Id which got registered for buku in Yourturn/Kio."
     - ZookeeperConnectionString:
         Description: "Which Zookeeper Cluster should be used? Format: IP_NODE1:PORT,IP_NODE2:PORT, ..."
-    - ELBSecurityGroupID:
-        Description: "The Security Group ID, in which the Load Balancer is"
     - HostedZone:
         Description: "The generic Hosted Zone for your AWS account"
         
@@ -89,6 +87,23 @@ Resources:
           - Effect: Allow
             Action: autoscaling:Describe*
             Resource: "*"
+  BukuSecGroup:
+    Type: AWS::EC2::SecurityGroup
+    Properties:
+      GroupDescription: "Buku Appliance Security Group"
+      SecurityGroupIngress:
+        - IpProtocol: tcp
+          FromPort: 9092
+          ToPort: 9092
+          CidrIp: "0.0.0.0/0"
+        - IpProtocol: tcp
+          FromPort: 8004
+          ToPort: 8004
+          CidrIp: "0.0.0.0/0"
+        - IpProtocol: tcp
+          FromPort: 22
+          ToPort: 22
+          CidrIp: "0.0.0.0/0"
   Route53Record:
     Type: AWS::Route53::RecordSet
     Properties:
@@ -123,7 +138,7 @@ Resources:
           Protocol: TCP
           InstanceProtocol: TCP
       SecurityGroups:
-        - "{{Arguments.ELBSecurityGroupID}}"
+        - "Fn::GetAtt" : [ "BukuSecGroup" , "GroupId" ]
       Scheme: internal
       Subnets:
         Fn::FindInMap:
