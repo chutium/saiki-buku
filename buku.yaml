@@ -13,10 +13,8 @@ SenzaInfo:
         Description: "The Application Id which got registered for buku in Yourturn/Kio."
     - ZookeeperConnectionString:
         Description: "Which Zookeeper Cluster should be used? Format: IP_NODE1:PORT,IP_NODE2:PORT, ..."
-    - ELBSecurityGroup:
-        Description: "The Security Group, in which the Load Balancer is"
-    - NameHostedZone:
-        Description: "The specific Named Hosted Zone for Buku"
+    - ELBSecurityGroupID:
+        Description: "The Security Group ID, in which the Load Balancer is"
     - HostedZone:
         Description: "The generic Hosted Zone for your AWS account"
         
@@ -95,8 +93,8 @@ Resources:
     Type: AWS::Route53::RecordSet
     Properties:
       HostedZoneName: "{{Arguments.HostedZone}}"
-      Name: "{{Arguments.NameHostedZone}}"
-      SetIdentifier: "buku-{{Arguments.version}}"
+      Name: "{{Arguments.ApplicationID}}.{{Arguments.HostedZone}}"
+      SetIdentifier: "{{Arguments.ApplicationID}}-{{Arguments.version}}"
       Type: CNAME
       TTL: 20
       Weight: 0
@@ -107,7 +105,7 @@ Resources:
   AppLoadBalancer:
     Type: AWS::ElasticLoadBalancing::LoadBalancer
     Properties:
-      LoadBalancerName: "buku-{{Arguments.version}}"
+      LoadBalancerName: "{{Arguments.ApplicationID}}-{{Arguments.version}}"
       CrossZone: true
       HealthCheck:
         Target: TCP:9092
@@ -125,7 +123,7 @@ Resources:
           Protocol: TCP
           InstanceProtocol: TCP
       SecurityGroups:
-        - "{{Arguments.ELBSecurityGroup}}"
+        - "{{Arguments.ELBSecurityGroupID}}"
       Scheme: internal
       Subnets:
         Fn::FindInMap:
