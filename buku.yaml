@@ -78,7 +78,7 @@ Resources:
           Statement:
           - Effect: Allow
             Action: "s3:GetObject"
-            Resource: ["arn:aws:s3:::{{Arguments.MintBucket}}/*"]
+            Resource: ["arn:aws:s3:::{{Arguments.MintBucket}}/{{Arguments.ApplicationID}}/*"]
       - PolicyName: AmazonEC2MetadataReadAccess
         PolicyDocument:
           Version: "2012-10-17"
