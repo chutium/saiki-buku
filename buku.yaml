@@ -93,8 +93,8 @@ Resources:
     Type: AWS::Route53::RecordSet
     Properties:
       HostedZoneName: "{{Arguments.HostedZone}}"
-      Name: "{{Arguments.ApplicationID}}.{{Arguments.HostedZone}}"
-      SetIdentifier: "{{Arguments.ApplicationID}}-{{Arguments.version}}"
+      Name: "{{SenzaInfo.StackName}}.{{Arguments.HostedZone}}"
+      SetIdentifier: "{{SenzaInfo.StackName}}-{{Arguments.version}}"
       Type: CNAME
       TTL: 20
       Weight: 0
@@ -105,7 +105,7 @@ Resources:
   AppLoadBalancer:
     Type: AWS::ElasticLoadBalancing::LoadBalancer
     Properties:
-      LoadBalancerName: "{{Arguments.ApplicationID}}-{{Arguments.version}}"
+      LoadBalancerName: "{{SenzaInfo.StackName}}-{{Arguments.version}}"
       CrossZone: true
       HealthCheck:
         Target: TCP:9092
