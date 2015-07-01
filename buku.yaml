@@ -35,7 +35,7 @@ SenzaComponents:
             VolumeSize: 80
       InstanceType: t2.small
       SecurityGroups:
-        - app-buku
+        - "Fn::GetAtt" : [ "BukuSecGroup" , "GroupId" ]
       IamRoles:
         - Ref: BukuRole
       TaupageConfig:
