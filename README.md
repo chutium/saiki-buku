@@ -33,7 +33,7 @@ wget https://raw.githubusercontent.com/zalando/saiki-buku/master/buku.yaml
 ###### execute senza with the definition file
 
 ```
-senza create buku.yaml <STACK_VERSION> <DOCKER_IMAGE> <MINT_BUCKET> <SCALYR_LOGGING_KEY> <APPLICATION_ID> <ZOOKEEPER_CONN_STRING> <Hosted_Zone> [--region AWS_REGION]
+senza create buku.yaml <STACK_VERSION> <DOCKER_IMAGE_WITH_VERSION_TAG> <MINT_BUCKET> <SCALYR_LOGGING_KEY> <APPLICATION_ID> <ZOOKEEPER_CONN_STRING> <Hosted_Zone> [--region AWS_REGION]
 ```
 
 A real world example would be:
