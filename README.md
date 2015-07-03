@@ -6,11 +6,11 @@ Buku uses port ```8004``` as ```JMX_PORT```.
 
 Usage
 =====
-Create an autoscaling group in AWS, and on each instance of this autoscaling group, after building the docker image, start Kewan like this:
+Create an autoscaling group in AWS, and on each instance of this autoscaling group, after building the docker image, start Buku like this:
 ```
 sudo docker run -d -e ZOOKEEPER_CONN_STRING=xxx.xxx.xxx.xxx:2181,yyy.yyy.yyy.yyy:2181,zzz.zzz.zzz.zzz:2181 -e JMX_PORT=8004 -p 8004:8004 -p 9092:9092 --net=host <IMAGE_ID>
 ```
-Docker run option ```--net=host``` is needed, so zookeeper can bind the interface from the host, to listen for leader elections. Ref. https://docs.docker.com/articles/networking/#how-docker-networks-a-container
+Docker run option ```--net=host``` is needed, so kafka can bind the interface from the host, to listen for leader elections. Ref. https://docs.docker.com/articles/networking/#how-docker-networks-a-container
 
 Deployment with STUPS toolbox
 -----------------------------
@@ -19,7 +19,7 @@ Deployment with STUPS toolbox
 
 Push your docker image to STUPS ```PierOne```, see here: http://stups.readthedocs.org/en/latest/user-guide/deployment.html#prepare-the-deployment-artifact
 
-###### Register the Kewan app in Yourturn/Kio
+###### Register the Buku app in Yourturn/Kio
 
 Docs: http://docs.stups.io/en/latest/components/yourturn.html
 
@@ -33,7 +33,7 @@ wget https://raw.githubusercontent.com/zalando/saiki-buku/master/buku.yaml
 ###### execute senza with the definition file
 
 ```
-senza create buku.yaml <STACK_VERSION> <DOCKER_IMAGE> <MINT_BUCKET> <SCALYR_LOGGING_KEY> <APPLICATION_ID> <Zookeeper_Connection_String> <Hosted_Zone> [--region AWS_REGION]
+senza create buku.yaml <STACK_VERSION> <DOCKER_IMAGE> <MINT_BUCKET> <SCALYR_LOGGING_KEY> <APPLICATION_ID> <ZOOKEEPER_CONN_STRING> <Hosted_Zone> [--region AWS_REGION]
 ```
 
 A real world example would be:
