@@ -17,7 +17,7 @@ Deployment with STUPS toolbox
 
 ###### Create the docker and push
 
-Push your docker image to STUPS ```PierOne```, see here: http://stups.readthedocs.org/en/latest/user-guide/deployment.html#prepare-the-deployment-artifact
+Push your docker image to STUPS ```Pier One```, see here: http://docs.stups.io/en/latest/user-guide/deployment.html#prepare-the-deployment-artifact
 
 ###### Register the Buku app in Yourturn/Kio
 
@@ -46,4 +46,4 @@ An autoscaling group will be created and Buku docker container will be running o
 Your Kafka Producer/Consumer can connect to this Buku cluster with its Route53 DNS name: ```<STACK_NAME>.<Hosted_Zone>```, such as: ```buku.example.org```. This is a CNAME record with value of Buku's AppLoadBalancer (ELB), this LoadBalancer is an internal LoadBalancer, so that means, in order to access this Buku cluster, your Producer or Consumer also need to be deployed in the same region's VPC in AWS.
 
 Check the STUPS documention for additional options:
-http://stups.readthedocs.org/en/latest/
+http://docs.stups.io
