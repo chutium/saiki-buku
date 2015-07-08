@@ -1,12 +1,10 @@
-FROM zalando/ubuntu:14.04.1-1
+FROM zalando/python:3.4.0-1
 MAINTAINER fabian.wollert@zalando.de teng.qiu@zalando.de
 
 ENV KAFKA_VERSION="0.8.2.1" SCALA_VERSION="2.10"
 
 RUN apt-get update
-RUN apt-get install python3 python3-pip wget openjdk-7-jre -y --force-yes
-RUN easy_install-3.4 pip
-RUN pip3 install boto3
+RUN apt-get install wget openjdk-7-jre -y --force-yes
 
 ADD download_kafka.sh /tmp/download_kafka.sh
 RUN chmod 777 /tmp/download_kafka.sh
