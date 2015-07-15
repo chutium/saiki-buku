@@ -10,7 +10,7 @@ SenzaInfo:
     - ApplicationID:
         Description: "The Application Id which got registered for buku in Yourturn/Kio."
     - ZookeeperConnectionString:
-        Description: "Which Zookeeper Cluster should be used? Format: IP_NODE1:PORT,IP_NODE2:PORT, ... or DNS record of Exhibitor Cluster, e.g.: exhibitor.example.org:2181"
+        Description: "Which ZooKeeper Cluster should be used? Format: IP_NODE1:PORT,IP_NODE2:PORT, ... or DNS record and ZooKeeper port of Exhibitor Cluster, e.g.: exhibitor.example.org:2181"
     - HostedZone:
         Description: "The generic Hosted Zone for your AWS account"
         
