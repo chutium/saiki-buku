@@ -7,4 +7,6 @@ echo "" >> /opt/kafka_${SCALA_VERSION}-${KAFKA_VERSION}/config/server.properties
 echo "writing id to config_file"
 /tmp/find_out_own_id.py -f /opt/kafka_${SCALA_VERSION}-${KAFKA_VERSION}/config/server.properties
 
+/tmp/reassignment.sh &
+
 exec /opt/kafka_${SCALA_VERSION}-${KAFKA_VERSION}/bin/kafka-server-start.sh /opt/kafka_${SCALA_VERSION}-${KAFKA_VERSION}/config/server.properties

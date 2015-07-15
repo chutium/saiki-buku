@@ -24,7 +24,9 @@ RUN chmod -R 777 /opt/kafka_${SCALA_VERSION}-${KAFKA_VERSION}/
 WORKDIR /opt/kafka_${SCALA_VERSION}-${KAFKA_VERSION}/
 
 ADD add_zk_config_and_start.sh /tmp/add_zk_config_and_start.sh
+ADD reassignment.sh /tmp/reassignment.sh
 RUN chmod 777 /tmp/add_zk_config_and_start.sh
+RUN chmod 777 /tmp/reassignment.sh
 CMD /tmp/add_zk_config_and_start.sh
 
 EXPOSE 9092 8004
