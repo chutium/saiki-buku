@@ -133,7 +133,7 @@ def generate_json(zk_dict, replication_factor, broken_topics = False):
                 avail_brokers = list(avail_brokers_init)
                 broker_list = []
                 for i in range(0, replication_factor):
-                    logging.debug(final_result)
+                    #logging.debug(final_result)
                     broker = get_best_broker(zk_dict, list(avail_brokers), final_result, ignore_existing)
                     logging.debug("using broker: " + broker + " for topic: " + str(topic) + ", partition: " + str(partition))
                     avail_brokers.remove(broker)
@@ -142,7 +142,7 @@ def generate_json(zk_dict, replication_factor, broken_topics = False):
                 final_result['partitions'].append({'topic': topic, 'partition': int(partition), 'replicas': broker_list})
         return final_result
     else:
-        logging.info("no broken topics found, exiting")
+        logging.info("no broken topics found")
         return {}
 
 
@@ -171,7 +171,7 @@ def get_broker_weight(zk_dict, new_assignment, broker, ignore_existing = False):
     return broker_weight
 
 def get_best_broker(zk_dict, available_brokers, new_assignment, ignore_existing = False):
-    logging.debug("new assignment: " + str(new_assignment))
+    #logging.debug("new assignment: " + str(new_assignment))
     if len(available_brokers) == 1:
         logging.debug("only one broker available: " + str(available_brokers))
         return available_brokers[0]
@@ -189,20 +189,27 @@ def get_best_broker(zk_dict, available_brokers, new_assignment, ignore_existing 
 
 def write_json_to_zk(zk, final_result):
     logging.info("writing reassigned partitions in ZK")
-    timeout_count=0
-    done = False
-    while timeout_count < 10 and done == False:
-        try:
-            zk.create("/admin/reassign_partitions", json.dumps(final_result).encode('utf-8'))
-            done = True
-        except NodeExistsError:
-            check = zk.get("/admin/reassign_partitions")
-            if check[0] == b'{"version": 1, "partitions": []}':
-                zk.delete("/admin/reassign_partitions", recursive=True)
-            else:
-                timeout_count = timeout_count + 1
-                logging.info("there seems to be a reassigning already taking place, waiting 10 mins")
-                sleep(600)
+    for step in final_result['partitions']:
+        logging.info("trying to repair: " + str(step))
+        timeout_count=0
+        done = False
+        while timeout_count < 360 and done == False:
+            try:
+                zk.create("/admin/reassign_partitions", json.dumps({'version':1,'partitions':[step]}).encode('utf-8'))
+                done = True
+                logging.info("done")
+                sleep(2)
+            except NodeExistsError:
+                check = zk.get("/admin/reassign_partitions")
+                if check[0] == b'{"version": 1, "partitions": []}':
+                    zk.delete("/admin/reassign_partitions", recursive=True)
+                else:
+                    #only output message every 10mins
+                    if timeout_count % 60 == 0:
+                        logging.info("there seems to be a reassigning already taking place: " + str(check[0].decode('utf-8')))
+                        logging.info("waiting ...")
+                    timeout_count = timeout_count + 1
+                    sleep(10)
     if done == False:
         logging.warning("Reassignment was not successfull due to timeout issues of the previous reassignment")        
 
@@ -236,15 +243,21 @@ def run():
         print(result)
         write_json_to_zk(zk, result)
     else:
-        needed = False
+        logging.info("no JSON generated")
+        needed = True
         for broker in zk_dict['broker']:
             if int(get_broker_weight(zk_dict,{'partitions': []},broker)) == 0:
                 needed = True
         if needed == True:
             result = generate_json(zk_dict, REPLICATION_FACTOR, broken_topics = False)
-            print(result)
-            write_json_to_zk(zk, result)
+            if result != {}:
+
+                logging.info("JSON generated")
+                write_json_to_zk(zk, result)
+        else:
+            logging.info("no unused Broker found")
+            
 
     zk.stop()
-
+    logging.info("exiting")
     
