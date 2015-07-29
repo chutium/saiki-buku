@@ -21,13 +21,13 @@ f.close()
 find_out_own_id.run()
 
 if os.getenv('REASSIGN_PARTITIONS') == 'yes':
-	pool = Pool()
-	logging.info("starting reassignment script")
-	pool.apply_async(rebalance_partitions.run)
+    pool = Pool()
+    logging.info("starting reassignment script")
+    pool.apply_async(rebalance_partitions.run)
 
 logging.info("starting kafka server ...")
 subprocess.call([kafka_dir + "/bin/kafka-server-start.sh", kafka_dir + "/config/server.properties"])
 
 if os.getenv('REASSIGN_PARTITIONS') == 'yes':
-	pool.close()
-	pool.join()
+    pool.close()
+    pool.join()
