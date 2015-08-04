@@ -15,6 +15,7 @@ RUN /tmp/download_kafka.sh
 RUN tar xf /tmp/kafka_${SCALA_VERSION}-${KAFKA_VERSION}.tgz -C /opt
 
 ADD server.properties $KAFKA_DIR/config/server.properties
+ADD log4j.properties $KAFKA_DIR/config/log4j.properties
 
 RUN mkdir -p /data/kafka-logs
 RUN chmod -R 777 /data/kafka-logs

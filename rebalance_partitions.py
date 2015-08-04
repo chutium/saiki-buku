@@ -135,7 +135,6 @@ def generate_json(zk_dict, replication_factor, broken_topics = False):
         logging.info("no broken topics found")
         return {}
 
-
 def get_broker_weight(zk_dict, new_assignment, broker, ignore_existing = False):
     broker_data = {}
     broker_weight = 0
@@ -203,7 +202,6 @@ def write_json_to_zk(zk, final_result):
     if done == False:
         logging.warning("Reassignment was not successfull due to timeout issues of the previous reassignment")        
 
-
 def get_zk_dict(zk):
     result = {'topics':[],'broker':[]}
     for topic in readout_topics(zk):
@@ -251,8 +249,6 @@ def run():
                     write_json_to_zk(zk, result)
         else:
             logging.info("no unused Broker found")
-            
 
     zk.stop()
     logging.info("exiting")
-    
