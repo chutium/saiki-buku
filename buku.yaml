@@ -19,8 +19,8 @@ SenzaComponents:
   - AppServer:
       Type: Senza::TaupageAutoScalingGroup
       AutoScaling:
-        Minimum: 5
-        Maximum: 5
+        Minimum: 3
+        Maximum: 3
         MetricType: CPU
       HealthCheckType: ELB
       ElasticLoadBalancer: AppLoadBalancer
@@ -30,7 +30,7 @@ SenzaComponents:
         - DeviceName: /dev/xvdk
           Ebs:
             VolumeSize: 80
-      InstanceType: t2.small
+      InstanceType: t2.medium
       SecurityGroups:
         - "Fn::GetAtt" : [ "BukuSecGroup" , "GroupId" ]
       IamRoles:
@@ -107,6 +107,19 @@ Resources:
     Properties:
       HostedZoneName: "{{Arguments.HostedZone}}"
       Name: "{{SenzaInfo.StackName}}.{{Arguments.HostedZone}}"
+      SetIdentifier: "{{SenzaInfo.StackName}}-{{Arguments.version}}"
+      Type: CNAME
+      TTL: 20
+      Weight: 0
+      ResourceRecords:
+        - Fn::GetAtt:
+           - AppLoadBalancer
+           - DNSName
+  Route53Record:
+    Type: AWS::Route53::RecordSet
+    Properties:
+      HostedZoneName: "{{Arguments.HostedZone}}"
+      Name: "{{SenzaInfo.StackName}}-{{Arguments.version}}.{{Arguments.HostedZone}}"
       SetIdentifier: "{{SenzaInfo.StackName}}-{{Arguments.version}}"
       Type: CNAME
       TTL: 20

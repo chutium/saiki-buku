@@ -4,10 +4,12 @@ import logging
 import json
 import random
 import os
+import wait_for_kafka_startup
 
 class NotEnoughBrokersException(Exception):
     def __init__(self):
-        pass
+        import sys
+        sys.stdout.flush()
 
 def state_listener(state):
     if state == KazooState.LOST:
@@ -81,20 +83,7 @@ def get_own_ip():
     import requests
     return requests.get('http://169.254.169.254/latest/dynamic/instance-identity/document').json()['privateIp']
 
-def wait_for_kafka_startup(ip, port = 9092):
-    import socket
-    from time import sleep
-    timeout_count=0
-    done = False
-    while timeout_count < 10 and done == False:
-        sock = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
-        result = sock.connect_ex((ip, port))
-        if result == 0:
-            done = True
-            return True
-        else:
-            timeout_count = timeout_count + 1
-            sleep(10)
+
 
 def generate_json(zk_dict, replication_factor, broken_topics = False):
     ignore_existing = False
@@ -127,6 +116,7 @@ def generate_json(zk_dict, replication_factor, broken_topics = False):
         logging.debug("Available Brokers: " + str(len(avail_brokers_init)))
         logging.debug("Replication Factor: " + str(replication_factor))
         final_result = {'version': 1, 'partitions': []}
+        logging.info("generating now ")
         for topic in topics_to_reassign:
             for partition in topics_to_reassign[topic]:
                 logging.debug("finding new brokers for topic: " + str(topic) + ", partition: " + str(partition))
@@ -226,7 +216,10 @@ def run():
     REPLICATION_FACTOR=3
     ZOOKEEPER_CONNECT_STRING=os.getenv('ZOOKEEPER_CONN_STRING')
     logging.info("waiting for kafka to start up")
-    wait_for_kafka_startup(get_own_ip())
+    if os.getenv('WAIT_FOR_KAFKA') != 'no':
+        wait_for_kafka_startup.run(get_own_ip())
+    else:
+        sleep(10)
 
     logging.info("kafka port is open, continuing")
 
@@ -240,8 +233,9 @@ def run():
     result = generate_json(zk_dict, REPLICATION_FACTOR, broken_topics = True)
     if result != {}:
         logging.info("JSON generated")
-        print(result)
-        write_json_to_zk(zk, result)
+        #print(result)
+        if os.getenv('WRITE_TO_JSON') != 'no':
+            write_json_to_zk(zk, result)
     else:
         logging.info("no JSON generated")
         needed = True
@@ -253,7 +247,8 @@ def run():
             if result != {}:
 
                 logging.info("JSON generated")
-                write_json_to_zk(zk, result)
+                if os.getenv('WRITE_TO_JSON') != 'no':
+                    write_json_to_zk(zk, result)
         else:
             logging.info("no unused Broker found")
             

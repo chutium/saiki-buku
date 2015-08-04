@@ -27,6 +27,7 @@ WORKDIR $KAFKA_DIR
 
 ADD start_kafka_and_reassign_partitions.py /tmp/start_kafka_and_reassign_partitions.py
 ADD rebalance_partitions.py /tmp/rebalance_partitions.py
+ADD wait_for_kafka_startup.py /tmp/wait_for_kafka_startup.py
 RUN chmod 777 /tmp/start_kafka_and_reassign_partitions.py
 CMD /tmp/start_kafka_and_reassign_partitions.py
 
