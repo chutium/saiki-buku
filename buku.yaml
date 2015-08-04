@@ -107,7 +107,7 @@ Resources:
     Properties:
       HostedZoneName: "{{Arguments.HostedZone}}"
       Name: "{{SenzaInfo.StackName}}.{{Arguments.HostedZone}}"
-      SetIdentifier: "{{SenzaInfo.StackName}}-{{Arguments.version}}"
+      SetIdentifier: "{{SenzaInfo.StackName}}-{{Arguments.version}}-master"
       Type: CNAME
       TTL: 20
       Weight: 0
