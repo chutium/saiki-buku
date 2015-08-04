@@ -120,10 +120,8 @@ Resources:
     Properties:
       HostedZoneName: "{{Arguments.HostedZone}}"
       Name: "{{SenzaInfo.StackName}}-{{Arguments.version}}.{{Arguments.HostedZone}}"
-      SetIdentifier: "{{SenzaInfo.StackName}}-{{Arguments.version}}"
       Type: CNAME
       TTL: 20
-      Weight: 0
       ResourceRecords:
         - Fn::GetAtt:
            - AppLoadBalancer
