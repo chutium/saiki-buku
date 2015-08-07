@@ -2,7 +2,6 @@ from kazoo.client import KazooClient, KazooState, NodeExistsError
 from time import sleep
 import logging
 import json
-import random
 import os
 import wait_for_kafka_startup
 
@@ -83,8 +82,6 @@ def get_own_ip():
     import requests
     return requests.get('http://169.254.169.254/latest/dynamic/instance-identity/document').json()['privateIp']
 
-
-
 def generate_json(zk_dict, replication_factor, broken_topics = False):
     ignore_existing = False
     if broken_topics == True:
@@ -136,7 +133,6 @@ def generate_json(zk_dict, replication_factor, broken_topics = False):
         return {}
 
 def get_broker_weight(zk_dict, new_assignment, broker, ignore_existing = False):
-    broker_data = {}
     broker_weight = 0
     if ignore_existing == False:
         for topic in zk_dict['topics']:
