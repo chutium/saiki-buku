@@ -3,7 +3,6 @@
 import subprocess
 import os
 import rebalance_partitions
-from subprocess import Popen
 import logging
 import find_out_own_id
 from multiprocessing import Pool
@@ -21,6 +20,7 @@ f.close()
 
 broker_id = find_out_own_id.run()
 
+
 def check_broker_id_in_zk(broker_id, process):
     import requests
     from time import sleep
@@ -30,7 +30,7 @@ def check_broker_id_in_zk(broker_id, process):
     else:
         sleep(10)
     while True:
-        from kazoo.client import KazooClient, KazooState, NodeExistsError
+        from kazoo.client import KazooClient
         zk = KazooClient(hosts=os.getenv('ZOOKEEPER_CONN_STRING'))
         zk.start()
         try:
@@ -53,7 +53,7 @@ if os.getenv('REASSIGN_PARTITIONS') == 'yes':
 logging.info("starting kafka server ...")
 kafka_process = subprocess.Popen([kafka_dir + "/bin/kafka-server-start.sh", kafka_dir + "/config/server.properties"])
 
-pool.apply_async(check_broker_id_in_zk,[broker_id, kafka_process])
+pool.apply_async(check_broker_id_in_zk, [broker_id, kafka_process])
 
 if os.getenv('REASSIGN_PARTITIONS') == 'yes':
     pool.close()
