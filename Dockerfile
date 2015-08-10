@@ -30,6 +30,19 @@ ADD start_kafka_and_reassign_partitions.py /tmp/start_kafka_and_reassign_partiti
 ADD rebalance_partitions.py /tmp/rebalance_partitions.py
 ADD wait_for_kafka_startup.py /tmp/wait_for_kafka_startup.py
 RUN chmod 777 /tmp/start_kafka_and_reassign_partitions.py
-CMD /usr/bin/env python3 -u /tmp/start_kafka_and_reassign_partitions.py
+
+# SCALYR INSTALLATION
+RUN apt-get update 
+RUN apt-get install -y --force-yes wget apt-transport-https python
+RUN wget -q https://www.scalyr.com/scalyr-repo/stable/latest/scalyr-agent-2.0.11.tar.gz
+RUN tar -zxf scalyr-agent-2.0.11.tar.gz -C /tmp
+RUN rm scalyr-agent-2.0.11.tar.gz
+ENV PATH=/tmp/scalyr-agent-2.0.11/bin:$PATH
+RUN chmod -R 777 /tmp/scalyr-agent-2.0.11/
+
+ADD scalyr_startup.sh /tmp/scalyr_startup.sh
+RUN chmod 777 /tmp/scalyr_startup.sh
+
+CMD /tmp/scalyr_startup.sh && /usr/bin/env python3 -u /tmp/start_kafka_and_reassign_partitions.py
 
 EXPOSE 9092 8004

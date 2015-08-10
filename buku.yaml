@@ -54,6 +54,8 @@ SenzaComponents:
           ZOOKEEPER_CONN_STRING: "{{Arguments.ZookeeperConnectionString}}"
           JMX_PORT: 8004
           REASSIGN_PARTITIONS: "yes"
+          SCALYR_ACCOUNT_KEY: '{{Arguments.ScalyrAccountKey}}'
+          SCALYR_LOGS: '/opt/kafka_2.10-0.8.2.1/logs/controller.log,/opt/kafka_2.10-0.8.2.1/logs/kafka-request.log,/opt/kafka_2.10-0.8.2.1/logs/kafkaServer-gc.log,/opt/kafka_2.10-0.8.2.1/logs/log-cleaner.log,/opt/kafka_2.10-0.8.2.1/logs/server.log,/opt/kafka_2.10-0.8.2.1/logs/state-change.log'
 
 Resources:
   BukuRole:
