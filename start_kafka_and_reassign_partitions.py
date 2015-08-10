@@ -24,13 +24,12 @@ broker_id = find_out_own_id.run()
 def check_broker_id_in_zk(broker_id, process):
     import requests
     from time import sleep
-    if os.getenv('WAIT_FOR_KAFKA') != 'no':
-        ip = requests.get('http://169.254.169.254/latest/dynamic/instance-identity/document').json()['privateIp']
-        wait_for_kafka_startup.run(ip)
-    else:
-        sleep(10)
+    from kazoo.client import KazooClient
     while True:
-        from kazoo.client import KazooClient
+        if os.getenv('WAIT_FOR_KAFKA') != 'no':
+            ip = requests.get('http://169.254.169.254/latest/dynamic/instance-identity/document').json()['privateIp']
+            wait_for_kafka_startup.run(ip)
+            os.environ['WAIT_FOR_KAFKA'] = 'no'
         zk = KazooClient(hosts=os.getenv('ZOOKEEPER_CONN_STRING'))
         zk.start()
         try:
@@ -39,10 +38,14 @@ def check_broker_id_in_zk(broker_id, process):
             sleep(10)
             zk.stop()
         except:
-            logging.warning("I'm not in ZK registered, shutting down!")
+            logging.warning("I'm not in ZK registered, killing kafka broker process!")
             zk.stop()
             process.kill()
-            exit(1)
+            logging.info("restarting kafka server ...")
+            process = subprocess.Popen([kafka_dir
+                                        + "/bin/kafka-server-start.sh", kafka_dir
+                                        + "/config/server.properties"])
+            os.environ['WAIT_FOR_KAFKA'] = 'yes'
 
 pool = Pool()
 

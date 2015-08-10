@@ -147,7 +147,6 @@ def generate_json(zk_dict, replication_factor, broken_topics=False):
 
 
 def get_broker_weight(zk_dict, new_assignment, broker, ignore_existing=False):
-    # broker_data = {}
     broker_weight = 0
     if ignore_existing is False:
         for topic in zk_dict['topics']:
