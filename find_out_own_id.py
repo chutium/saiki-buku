@@ -4,9 +4,10 @@ from kazoo.client import KazooClient, NoNodeError
 import requests
 import os
 
+
 def get_broker_unique_id(broker_id):
-    ZOOKEEPER_CONNECT_STRING=os.getenv('ZOOKEEPER_CONN_STRING')
-    zk = KazooClient(hosts=ZOOKEEPER_CONNECT_STRING, read_only=True)
+    zookeeper_connect_string = os.getenv('ZOOKEEPER_CONN_STRING')
+    zk = KazooClient(hosts=zookeeper_connect_string, read_only=True)
     zk.start()
     try:
         ids = zk.get_children('/brokers/ids')
@@ -17,6 +18,7 @@ def get_broker_unique_id(broker_id):
     zk.stop()
     return broker_id
 
+
 def run():
     config_file = os.getenv('KAFKA_DIR') + '/config/server.properties'
     url = 'http://169.254.169.254/latest/dynamic/instance-identity/document'
@@ -25,7 +27,7 @@ def run():
         json = response.json()
         myid = json['privateIp'].rsplit(".", 1)[1]
     except requests.exceptions.ConnectionError:
-        myid="1"
+        myid = "1"
 
     broker_unique_id = get_broker_unique_id(myid)
     with open(config_file, mode='a', encoding='utf-8') as a_file:

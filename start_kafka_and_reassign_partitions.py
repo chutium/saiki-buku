@@ -20,6 +20,7 @@ f.close()
 
 broker_id = find_out_own_id.run()
 
+
 def check_broker_id_in_zk(broker_id, process):
     import requests
     from time import sleep
@@ -41,7 +42,9 @@ def check_broker_id_in_zk(broker_id, process):
             zk.stop()
             process.kill()
             logging.info("restarting kafka server ...")
-            process = subprocess.Popen([kafka_dir + "/bin/kafka-server-start.sh", kafka_dir + "/config/server.properties"])
+            process = subprocess.Popen([kafka_dir
+                                        + "/bin/kafka-server-start.sh", kafka_dir
+                                        + "/config/server.properties"])
             os.environ['WAIT_FOR_KAFKA'] = 'yes'
 
 pool = Pool()
