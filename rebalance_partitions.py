@@ -80,7 +80,7 @@ def check_for_broken_partitions(zk_dict):
                         break
             for part_broker_not_avail in tmp_result[topic['name']][partition]:
                 if tmp_result[topic['name']][partition][part_broker_not_avail] is False:
-                    if 'name' not in result[topic]:
+                    if topic['name'] not in result:
                         result[topic['name']] = {}
                     result[topic['name']][partition] = part_broker_not_avail
     return result
