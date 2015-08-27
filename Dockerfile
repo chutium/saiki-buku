@@ -6,7 +6,7 @@ ENV KAFKA_DIR="/opt/kafka_${SCALA_VERSION}-${KAFKA_VERSION}"
 
 RUN apt-get update
 RUN apt-get install wget openjdk-7-jre -y --force-yes
-RUN pip3 install --upgrade kazoo
+RUN pip3 install --upgrade kazoo boto3
 
 ADD download_kafka.sh /tmp/download_kafka.sh
 RUN chmod 777 /tmp/download_kafka.sh
@@ -29,6 +29,7 @@ WORKDIR $KAFKA_DIR
 ADD start_kafka_and_reassign_partitions.py /tmp/start_kafka_and_reassign_partitions.py
 ADD rebalance_partitions.py /tmp/rebalance_partitions.py
 ADD wait_for_kafka_startup.py /tmp/wait_for_kafka_startup.py
+ADD generate_zk_conn_str.py /tmp/generate_zk_conn_str.py
 RUN chmod 777 /tmp/start_kafka_and_reassign_partitions.py
 
 # SCALYR INSTALLATION
