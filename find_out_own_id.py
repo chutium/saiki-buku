@@ -31,6 +31,6 @@ def run():
 
     broker_unique_id = get_broker_unique_id(myid)
     with open(config_file, mode='a', encoding='utf-8') as a_file:
-        a_file.write('broker.id=' + broker_unique_id)
+        a_file.write('broker.id=' + broker_unique_id + '\n')
 
     return broker_unique_id

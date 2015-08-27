@@ -8,7 +8,7 @@ Usage
 =====
 Create an autoscaling group in AWS, and on each instance of this autoscaling group, after building the docker image, start Buku like this:
 ```
-sudo docker run -d -e ZOOKEEPER_CONN_STRING=xxx.xxx.xxx.xxx:2181,yyy.yyy.yyy.yyy:2181,zzz.zzz.zzz.zzz:2181 -e JMX_PORT=8004 -p 8004:8004 -p 9092:9092 --net=host <IMAGE_ID>
+sudo docker run -d -e ZOOKEEPER_STACK_NAME=local-test -e JMX_PORT=8004 -p 8004:8004 -p 9092:9092 --net=host <IMAGE_ID>
 ```
 Docker run option ```--net=host``` is needed, so kafka can bind the interface from the host, to listen for leader elections. Ref. https://docs.docker.com/articles/networking/#how-docker-networks-a-container
 
@@ -33,12 +33,12 @@ wget https://raw.githubusercontent.com/zalando/saiki-buku/master/buku.yaml
 ###### execute senza with the definition file
 
 ```
-senza create buku.yaml <STACK_VERSION> <DOCKER_IMAGE_WITH_VERSION_TAG> <MINT_BUCKET> <SCALYR_LOGGING_KEY> <APPLICATION_ID> <ZOOKEEPER_CONN_STRING> <Hosted_Zone> [--region AWS_REGION]
+senza create buku.yaml <STACK_VERSION> <DOCKER_IMAGE_WITH_VERSION_TAG> <MINT_BUCKET> <SCALYR_LOGGING_KEY> <APPLICATION_ID> <ZOOKEEPER_STACK_NAME> <Hosted_Zone> [--region AWS_REGION]
 ```
 
 A real world example would be:
 ```
-senza create buku.yaml 1 pierone.example.org/myteam/buku:0.1-SNAPSHOT example-stups-mint-some_id-eu-west-1 some_scalyr_key buku xxx.xxx.xxx.xxx:2181,yyy.yyy.yyy.yyy:2181,zzz.zzz.zzz.zzz:2181 example.org. --region eu-west-1
+senza create buku.yaml 1 pierone.example.org/myteam/buku:0.1-SNAPSHOT example-stups-mint-some_id-eu-west-1 some_scalyr_key buku zookeeper-stack example.org. --region eu-west-1
 ```
 
 An autoscaling group will be created and Buku docker container will be running on all of the EC2 instances in this autoscaling group.
