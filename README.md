@@ -6,7 +6,7 @@ Buku uses port ```8004``` as ```JMX_PORT```.
 
 Usage
 =====
-Create an autoscaling group in AWS, and on each instance of this autoscaling group, after building the docker image, start Buku like this:
+After building the docker image, start Buku like this:
 ```
 sudo docker run -d -e ZOOKEEPER_STACK_NAME=localhost -e JMX_PORT=8004 -p 8004:8004 -p 9092:9092 --net=host <IMAGE_ID>
 ```
