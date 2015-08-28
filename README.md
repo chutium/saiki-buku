@@ -8,9 +8,11 @@ Usage
 =====
 Create an autoscaling group in AWS, and on each instance of this autoscaling group, after building the docker image, start Buku like this:
 ```
-sudo docker run -d -e ZOOKEEPER_STACK_NAME=local-test -e JMX_PORT=8004 -p 8004:8004 -p 9092:9092 --net=host <IMAGE_ID>
+sudo docker run -d -e ZOOKEEPER_STACK_NAME=localhost -e JMX_PORT=8004 -p 8004:8004 -p 9092:9092 --net=host <IMAGE_ID>
 ```
 Docker run option ```--net=host``` is needed, so kafka can bind the interface from the host, to listen for leader elections. Ref. https://docs.docker.com/articles/networking/#how-docker-networks-a-container
+
+For local test, ```ZOOKEEPER_STACK_NAME``` should be set to the DNS name or IP adresse of one of your ZooKeeper node, such as in this example, ZooKeeper is running on localhost, you can set it with the host alias ```ZOOKEEPER_STACK_NAME=localhost```, or the local loopback IP like ```ZOOKEEPER_STACK_NAME=127.0.0.1```
 
 Deployment with STUPS toolbox
 -----------------------------

@@ -24,11 +24,7 @@ def run(stack_name):
                 private_ips.append(ec2.describe_instances(InstanceIds=[instance['InstanceId']])['Reservations'][0]['Instances'][0]['PrivateIpAddress'])
 
     except requests.exceptions.ConnectionError:
-        region = ""
-        instanceId = ""
-        privateIp = "127.0.0.1"
-
-        private_ips = [privateIp]
+        private_ips = [stack_name]
 
     zk_conn_str = ''
     for ip in private_ips:
