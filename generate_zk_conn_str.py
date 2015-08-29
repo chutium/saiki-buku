@@ -2,7 +2,6 @@
 
 import boto3
 import requests
-import os
 
 
 def run(stack_name):
@@ -14,14 +13,15 @@ def run(stack_name):
         json = response.json()
         region = json['region']
 
-        elb=boto3.client('elb', region_name=region)
+        elb = boto3.client('elb', region_name=region)
         ec2 = boto3.client('ec2', region_name=region)
 
         response = elb.describe_instance_health(LoadBalancerName=stack_name)
 
         for instance in response['InstanceStates']:
             if instance['State'] == 'InService':
-                private_ips.append(ec2.describe_instances(InstanceIds=[instance['InstanceId']])['Reservations'][0]['Instances'][0]['PrivateIpAddress'])
+                private_ips.append(ec2.describe_instances(
+                    InstanceIds=[instance['InstanceId']])['Reservations'][0]['Instances'][0]['PrivateIpAddress'])
 
     except requests.exceptions.ConnectionError:
         private_ips = [stack_name]
