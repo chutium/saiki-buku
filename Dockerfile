@@ -1,4 +1,4 @@
-FROM zalando/python:3.4.0-1
+FROM zalando/python:3.4.0-4
 MAINTAINER fabian.wollert@zalando.de teng.qiu@zalando.de
 
 ENV KAFKA_VERSION="0.8.2.1" SCALA_VERSION="2.10"
