@@ -4,6 +4,7 @@ import subprocess
 import os
 import rebalance_partitions
 import logging
+import requests
 import find_out_own_id
 from multiprocessing import Pool
 import wait_for_kafka_startup
@@ -13,7 +14,14 @@ kafka_dir = os.getenv('KAFKA_DIR')
 
 logging.basicConfig(level=getattr(logging, 'INFO', None))
 
-zk_conn_str = generate_zk_conn_str.run(os.getenv('ZOOKEEPER_STACK_NAME'))
+try:
+    response = requests.get('http://169.254.169.254/latest/dynamic/instance-identity/document')
+    json = response.json()
+    region = json['region']
+except requests.exceptions.ConnectionError:
+    region = None
+
+zk_conn_str = generate_zk_conn_str.run(os.getenv('ZOOKEEPER_STACK_NAME'), region)
 os.environ['ZOOKEEPER_CONN_STRING'] = zk_conn_str
 
 logging.info("Got ZooKeeper connection string: " + zk_conn_str)
@@ -47,7 +55,7 @@ def check_broker_id_in_zk(broker_id, process):
             wait_for_kafka_startup.run(ip)
             os.environ['WAIT_FOR_KAFKA'] = 'no'
 
-        new_zk_conn_str = generate_zk_conn_str.run(os.getenv('ZOOKEEPER_STACK_NAME'))
+        new_zk_conn_str = generate_zk_conn_str.run(os.getenv('ZOOKEEPER_STACK_NAME'), region)
         if zk_conn_str != new_zk_conn_str:
             logging.warning("ZooKeeper connection string changed!")
             zk_conn_str = new_zk_conn_str
