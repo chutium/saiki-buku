@@ -104,7 +104,7 @@ Resources:
           FromPort: 22
           ToPort: 22
           CidrIp: "0.0.0.0/0"
-  Route53Record:
+  Route53WeightedDomainRecord:
     Type: AWS::Route53::RecordSet
     Properties:
       HostedZoneName: "{{Arguments.HostedZone}}"
@@ -117,7 +117,7 @@ Resources:
         - Fn::GetAtt:
            - AppLoadBalancer
            - DNSName
-  Route53Record:
+  Route53VersionedDomainRecord:
     Type: AWS::Route53::RecordSet
     Properties:
       HostedZoneName: "{{Arguments.HostedZone}}"

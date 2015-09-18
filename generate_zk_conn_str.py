@@ -5,16 +5,11 @@ import requests
 
 
 def run(stack_name):
-    url = 'http://169.254.169.254/latest/dynamic/instance-identity/document'
     private_ips = []
 
     try:
-        response = requests.get(url)
-        json = response.json()
-        region = json['region']
-
-        elb = boto3.client('elb', region_name=region)
-        ec2 = boto3.client('ec2', region_name=region)
+        elb = boto3.client('elb')
+        ec2 = boto3.client('ec2')
 
         response = elb.describe_instance_health(LoadBalancerName=stack_name)
 
