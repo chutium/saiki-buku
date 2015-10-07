@@ -132,7 +132,7 @@ Resources:
       HealthCheck:
         Target: TCP:9092
         Timeout: 5
-        Interval: 60
+        Interval: 30
         UnhealthyThreshold: 2
         HealthyThreshold: 3
       Listeners:
