@@ -19,18 +19,19 @@ SenzaComponents:
   - AppServer:
       Type: Senza::TaupageAutoScalingGroup
       AutoScaling:
-        Minimum: 3
-        Maximum: 3
+        Minimum: 5
+        Maximum: 5
         MetricType: CPU
       HealthCheckType: ELB
       ElasticLoadBalancer: AppLoadBalancer
       LoadBalancerNames:
         - Ref: AppLoadBalancer
       BlockDeviceMappings:
-        - DeviceName: /dev/xvdk
+        - DeviceName: /dev/sda1
           Ebs:
-            VolumeSize: 80
-      InstanceType: t2.medium
+            VolumeSize: 500
+            VolumeType: gp2
+      InstanceType: c4.xlarge
       SecurityGroups:
         - "Fn::GetAtt" : [ "BukuSecGroup" , "GroupId" ]
       IamRoles:
@@ -45,11 +46,6 @@ SenzaComponents:
         mint_bucket: '{{Arguments.MintBucket}}'
         scalyr_account_key: '{{Arguments.ScalyrAccountKey}}'
         networking: host
-        mounts:
-          /data:
-            partition: /dev/xvdk
-            erase_on_boot: true
-            filesystem: ext4
         environment:
           ZOOKEEPER_STACK_NAME: "{{Arguments.ZookeeperStackName}}"
           JMX_PORT: 8004
