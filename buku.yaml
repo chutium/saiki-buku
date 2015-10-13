@@ -46,6 +46,7 @@ SenzaComponents:
         mint_bucket: '{{Arguments.MintBucket}}'
         scalyr_account_key: '{{Arguments.ScalyrAccountKey}}'
         networking: host
+        enhanced_cloudwatch_metrics: true
         environment:
           ZOOKEEPER_STACK_NAME: "{{Arguments.ZookeeperStackName}}"
           JMX_PORT: 8004
@@ -82,6 +83,13 @@ Resources:
             Resource: "*"
           - Effect: Allow
             Action: elasticloadbalancing:Describe*
+            Resource: "*"
+      - PolicyName: WriteZMONMetricsIntoCloudWatch
+        PolicyDocument:
+          Version: "2012-10-17"
+          Statement:
+          - Effect: Allow
+            Action: "cloudwatch:PutMetricData"
             Resource: "*"
   BukuSecGroup:
     Type: AWS::EC2::SecurityGroup
