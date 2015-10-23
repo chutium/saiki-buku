@@ -63,7 +63,7 @@ def check_broker_id_in_zk(broker_id, process):
             create_broker_properties(zk_conn_str)
             from random import randint
             wait_to_restart = randint(1, 20)
-            logging.info("Warting " + str(wait_to_restart) + " seconds to restart kafka broker ...")
+            logging.info("Waiting " + str(wait_to_restart) + " seconds to restart kafka broker ...")
             sleep(wait_to_restart)
             process.kill()
             logging.info("Restarting kafka broker with new ZooKeeper connection string ...")
