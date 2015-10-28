@@ -11,6 +11,8 @@ SenzaInfo:
         Description: "The Application Id which got registered for buku in Yourturn/Kio."
     - ZookeeperStackName:
         Description: "Which ZooKeeper Stack should be used?"
+    - ZookeeperPrefix:
+        Description: "Which ZooKeeper node should be used as prefix?"
     - HostedZone:
         Description: "The generic Hosted Zone for your AWS account"
 SenzaComponents:
@@ -49,6 +51,7 @@ SenzaComponents:
         enhanced_cloudwatch_metrics: true
         environment:
           ZOOKEEPER_STACK_NAME: "{{Arguments.ZookeeperStackName}}"
+          ZOOKEEPER_PREFIX: "{{Arguments.ZookeeperPrefix}}"
           JMX_PORT: 8004
           REASSIGN_PARTITIONS: "yes"
           SCALYR_ACCOUNT_KEY: '{{Arguments.ScalyrAccountKey}}'

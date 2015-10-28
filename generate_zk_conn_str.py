@@ -1,6 +1,7 @@
 #!/usr/bin/env python3
 
 import boto3
+import os
 
 
 def run(stack_name, region=None):
@@ -24,4 +25,4 @@ def run(stack_name, region=None):
     for ip in private_ips:
         zk_conn_str += ip + ':2181,'
 
-    return zk_conn_str[:-1]
+    return zk_conn_str[:-1] + os.getenv('ZOOKEEPER_PREFIX', '')
